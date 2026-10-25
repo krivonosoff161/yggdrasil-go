@@ -42,6 +42,9 @@ func (l *links) newLinkQUIC() *linkQUIC {
 		links:     l,
 		tlsconfig: l.core.config.tls.Clone(),
 		quicconfig: &quic.Config{
+			// Start at QUIC's minimum so handshakes fit paths with a 1280-byte
+			// IP MTU. Path MTU discovery can still increase the packet size.
+			InitialPacketSize:     1200,
 			MaxIdleTimeout:        time.Minute,
 			KeepAlivePeriod:       time.Second * 20,
 			TokenStore:            quic.NewLRUTokenStore(255, 255),
